@@ -9,7 +9,7 @@ export default function Home() {
             <span className="text-2xl font-light text-[--brand-tertiary]">Estética Integral</span>
           </div>
           <nav className="hidden sm:flex gap-6 text-sm text-[--foreground]/80">
-            <a href="#servicios" className="hover:text-[--brand-quaternary] transition-colors">Servicios</a>
+            <a href="/servicios" className="hover:text-[--brand-quaternary] transition-colors">Servicios</a>
             <a href="#testimonios" className="hover:text-[--brand-quaternary] transition-colors">Testimonios</a>
             <a href="#contacto" className="hover:text-[--brand-quaternary] transition-colors">Contacto</a>
           </nav>
@@ -30,7 +30,7 @@ export default function Home() {
               <a href="#contacto" className="btn-primary rounded-full px-6 py-3 text-sm font-medium shadow-sm">
                 Agenda tu cita
               </a>
-              <a href="#servicios" className="rounded-full px-6 py-3 text-sm font-medium bg-[--brand-secondary] text-[--brand-quaternary] border border-[--brand-quaternary]/20">
+              <a href="/servicios" className="rounded-full px-6 py-3 text-sm font-medium bg-[--brand-secondary] text-[--brand-quaternary] border border-[--brand-quaternary]/20">
                 Ver servicios
               </a>
             </div>
