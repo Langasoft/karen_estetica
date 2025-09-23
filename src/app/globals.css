@@ -1,13 +1,24 @@
 @import "tailwindcss";
 
+/* Global theme and brand palette for Karen Estética Integral */
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  /* Base UI */
+  --background: #ffffff; /* Secondary */
+  --foreground: #412536; /* readable on light pinks */
+
+  /* Brand palette */
+  --brand-primary: #F0D0DE;     /* Primario */
+  --brand-secondary: #FFFFFF;   /* Secundario */
+  --brand-tertiary: #DF92B0;    /* Terciario */
+  --brand-quaternary: #AF426B;  /* Cuaternario */
 }
 
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
+  --color-brand-primary: var(--brand-primary);
+  --color-brand-tertiary: var(--brand-tertiary);
+  --color-brand-quaternary: var(--brand-quaternary);
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
 }
@@ -19,8 +30,28 @@
   }
 }
 
+/* Base reset */
+* { box-sizing: border-box; }
+
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: var(--font-geist-sans), system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji";
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Utilities for brand */
+.brand-gradient {
+  background-image: linear-gradient(135deg, var(--brand-primary), var(--brand-tertiary) 55%, var(--brand-quaternary));
+}
+
+.btn-primary {
+  background-color: var(--brand-quaternary);
+  color: var(--brand-secondary);
+}
+.btn-primary:hover { filter: brightness(1.05); }
+
+.chip {
+  background-color: color-mix(in oklab, var(--brand-primary) 85%, white);
 }

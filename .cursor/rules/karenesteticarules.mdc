@@ -1,0 +1,64 @@
+---
+alwaysApply: true
+---
+
+# Reglas para desarrollo con Next.js en Cursor
+
+## Reglas Generales
+
+- Responder solo si hay una pregunta explícita.
+- Cumplir estrictamente las órdenes dadas sin improvisar.
+- No dar explicaciones ni texto adicional si no se piden.
+- Seguir siempre las convenciones de Next.js (App Router si se usa Next 13+).
+
+---
+
+## Código Limpio
+
+- Variables, funciones y componentes con nombres descriptivos en inglés.
+- Ninguna función debe superar 20–30 líneas.
+- Cada archivo debe tener una única responsabilidad.
+- Eliminar código comentado o sin uso.
+- Usar ESLint y Prettier con reglas estrictas.
+
+---
+
+## Documentación
+
+- Cada función debe tener JSDoc con descripción, parámetros y retorno.
+- Cada módulo debe iniciar con un comentario breve explicando su responsabilidad.
+- Usar README.md con instrucciones claras de instalación, ejecución y despliegue.
+
+---
+
+## Principios SOLID
+
+- Single Responsibility: cada componente o servicio hace una sola cosa.
+- Open/Closed: componentes y hooks deben ser extensibles, no modificables.
+- Liskov Substitution: los componentes hijos deben poder reemplazar a los padres sin romper.
+- Interface Segregation: separar hooks y servicios según la necesidad de cada consumidor.
+- Dependency Inversion: abstraer lógica en servicios e inyectar dependencias en lugar de acoplar.
+
+---
+
+## Estructura de Proyecto
+
+- /components → componentes funcionales y reutilizables.
+- /hooks → lógica de estado y efectos secundarios.
+- /services → llamadas API y lógica de negocio.
+- TypeScript obligatorio en todo el proyecto.
+- Tests unitarios y de integración en /tests con Jest y React Testing Library.
+
+---
+
+## Stack Tecnologico
+
+- Next.js
+- React
+- Typescript
+- JavaScript
+- MariaDB
+- css
+- shad.cn
+
+---
