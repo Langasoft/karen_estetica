@@ -1,20 +1,9 @@
+import Navbar from "@/components/Navbar";
+
 export default function Home() {
   return (
     <div className="min-h-screen grid grid-rows-[auto_1fr_auto] font-sans">
-      {/* Header */}
-      <header className="w-full backdrop-blur bg-[--brand-secondary]/70 border-b border-[--brand-tertiary]/30">
-        <div className="mx-auto max-w-6xl px-6 py-4 flex items-center justify-between">
-          <div className="flex items-baseline gap-2">
-            <span className="text-2xl font-semibold text-[--brand-quaternary] tracking-tight">Karen</span>
-            <span className="text-2xl font-light text-[--brand-tertiary]">Estética Integral</span>
-          </div>
-          <nav className="hidden sm:flex gap-6 text-sm text-[--foreground]/80">
-            <a href="#servicios" className="hover:text-[--brand-quaternary] transition-colors">Servicios</a>
-            <a href="#testimonios" className="hover:text-[--brand-quaternary] transition-colors">Testimonios</a>
-            <a href="#contacto" className="hover:text-[--brand-quaternary] transition-colors">Contacto</a>
-          </nav>
-        </div>
-      </header>
+      <Navbar />
 
       {/* Hero */}
       <main>
@@ -27,10 +16,10 @@ export default function Home() {
               Un lugar cálido y femenino donde tu bienestar es prioridad. Tratamientos faciales y corporales diseñados para resaltar tu esencia.
             </p>
             <div className="mt-8 flex items-center justify-center gap-4">
-              <a href="#contacto" className="btn-primary rounded-full px-6 py-3 text-sm font-medium shadow-sm">
+              <a href="/agenda" className="btn-primary rounded-full px-6 py-3 text-sm font-medium shadow-sm">
                 Agenda tu cita
               </a>
-              <a href="#servicios" className="rounded-full px-6 py-3 text-sm font-medium bg-[--brand-secondary] text-[--brand-quaternary] border border-[--brand-quaternary]/20">
+              <a href="/servicios" className="rounded-full px-6 py-3 text-sm font-medium bg-[--brand-secondary] text-[--brand-quaternary] border border-[--brand-quaternary]/20">
                 Ver servicios
               </a>
             </div>
