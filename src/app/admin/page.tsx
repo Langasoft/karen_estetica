@@ -147,28 +147,45 @@ export default function AdminPage() {
   };
 
   const handleConfirmDelete = async () => {
-    if (!deletingCategory) return;
-    
     try {
-      const response = await fetch(`/api/admin/categories/${deletingCategory.id_categoria}`, {
-        method: "DELETE",
-      });
-      const result = await response.json();
-      if (result.success) {
-        setShowDeleteModal(false);
-        setDeletingCategory(null);
-        loadCategories();
-      } else {
-        alert(result.message);
+      if (deletingService) {
+        const response = await fetch(`/api/admin/services/${deletingService.id_servicio}`, {
+          method: "DELETE",
+        });
+        const result = await response.json();
+        if (result.success) {
+          setShowDeleteModal(false);
+          setDeletingService(null);
+          loadServices(selectedCategoryFilter);
+          return;
+        } else {
+          alert(result.message);
+          return;
+        }
+      }
+
+      if (deletingCategory) {
+        const response = await fetch(`/api/admin/categories/${deletingCategory.id_categoria}`, {
+          method: "DELETE",
+        });
+        const result = await response.json();
+        if (result.success) {
+          setShowDeleteModal(false);
+          setDeletingCategory(null);
+          loadCategories();
+        } else {
+          alert(result.message);
+        }
       }
     } catch (error) {
-      alert("Error al eliminar la categoría");
+      alert("Error al eliminar");
     }
   };
 
   const handleCancelDelete = () => {
     setShowDeleteModal(false);
     setDeletingCategory(null);
+    setDeletingService(null);
   };
 
   const handleAddCategory = () => {
@@ -285,9 +302,16 @@ export default function AdminPage() {
     { label: "Eliminar", onClick: handleDeleteCategory, className: "bg-red-600 text-white hover:bg-red-700" },
   ];
 
+  const [deletingService, setDeletingService] = useState<any>(null);
+
+  const handleDeleteService = (service: any) => {
+    setDeletingService(service);
+    setShowDeleteModal(true);
+  };
+
   const servicesActions = [
     { label: "Editar", onClick: handleEditService },
-    { label: "Eliminar", onClick: handleDeleteCategory, className: "bg-red-600 text-white hover:bg-red-700" },
+    { label: "Eliminar", onClick: handleDeleteService, className: "bg-red-600 text-white hover:bg-red-700" },
   ];
 
   return (
@@ -558,7 +582,7 @@ export default function AdminPage() {
       <ConfirmationModal
         isOpen={showDeleteModal}
         title="Confirmar Eliminación"
-        message={`¿Estás seguro de que quieres eliminar la categoría "${deletingCategory?.nombre_categoria}"?`}
+        message={deletingService ? `¿Estás seguro de que quieres eliminar el servicio "${deletingService?.nombre_servicio}"?` : `¿Estás seguro de que quieres eliminar la categoría "${deletingCategory?.nombre_categoria}"?`}
         onConfirm={handleConfirmDelete}
         onCancel={handleCancelDelete}
         confirmLabel="Eliminar"

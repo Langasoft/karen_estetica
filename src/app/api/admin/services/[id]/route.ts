@@ -3,10 +3,11 @@ import { query } from '@/services/db';
 
 export async function PUT(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    const id = parseInt(params.id);
+    const { id: idParam } = await params;
+    const id = parseInt(idParam);
     const { nombre_servicio, id_categoria, precio, duracion } = await request.json();
     
     if (isNaN(id) || !nombre_servicio || !id_categoria || !precio || !duracion) {
@@ -25,6 +26,36 @@ export async function PUT(
       success: true, 
       message: "Servicio actualizado exitosamente" 
     });
+  } catch (error) {
+    console.error("API error:", error);
+    return NextResponse.json(
+      { success: false, message: "Error interno del servidor" },
+      { status: 500 }
+    );
+  }
+}
+
+export async function DELETE(
+  request: NextRequest,
+  { params }: { params: Promise<{ id: string }> }
+) {
+  try {
+    const { id: idParam } = await params;
+    const id = parseInt(idParam);
+
+    if (isNaN(id)) {
+      return NextResponse.json(
+        { success: false, message: "ID inválido" },
+        { status: 400 }
+      );
+    }
+
+    await query(
+      "DELETE FROM servicios WHERE id_servicio = ?",
+      [id]
+    );
+
+    return NextResponse.json({ success: true, message: "Servicio eliminado exitosamente" });
   } catch (error) {
     console.error("API error:", error);
     return NextResponse.json(
