@@ -6,6 +6,7 @@ import DataTable from "@/components/DataTable";
 import Form from "@/components/Form";
 import ConfirmationModal from "@/components/ConfirmationModal";
 import SkeletonTable from "@/components/SkeletonTable";
+import MonthlyCalendar from "@/components/MonthlyCalendar";
 import SearchInput from "@/components/SearchInput";
 
 export default function AdminPage() {
@@ -20,9 +21,12 @@ export default function AdminPage() {
   const [editingCategory, setEditingCategory] = useState<any>(null);
   const [editingService, setEditingService] = useState<any>(null);
   const [deletingCategory, setDeletingCategory] = useState<any>(null);
-  const [activeTab, setActiveTab] = useState<'categories' | 'services'>('categories');
+  const [activeTab, setActiveTab] = useState<'categories' | 'services' | 'calendar'>('categories');
   const [selectedCategoryFilter, setSelectedCategoryFilter] = useState<string>('0');
   const [searchQuery, setSearchQuery] = useState<string>('');
+  // Inactivity logout (10 minutes)
+  const INACTIVITY_MS = 10 * 60 * 1000;
+  let inactivityTimer: number | undefined;
 
   useEffect(() => {
     // Verificar autenticación temporal
@@ -33,6 +37,34 @@ export default function AdminPage() {
       // Cargar categorías al iniciar
       loadCategories();
     }
+  }, [router]);
+
+  useEffect(() => {
+    const resetTimer = () => {
+      if (inactivityTimer) window.clearTimeout(inactivityTimer);
+      inactivityTimer = window.setTimeout(() => {
+        // Cerrar sesión por inactividad
+        localStorage.removeItem('authToken');
+        router.push('/');
+      }, INACTIVITY_MS);
+    };
+
+    // Eventos de actividad del usuario
+    const events: (keyof DocumentEventMap)[] = [
+      'mousemove',
+      'mousedown',
+      'keydown',
+      'scroll',
+      'touchstart',
+      'click',
+    ];
+    events.forEach(e => document.addEventListener(e, resetTimer, { passive: true }));
+    resetTimer();
+
+    return () => {
+      if (inactivityTimer) window.clearTimeout(inactivityTimer);
+      events.forEach(e => document.removeEventListener(e, resetTimer));
+    };
   }, [router]);
 
   const handleLogout = () => {
@@ -367,6 +399,19 @@ export default function AdminPage() {
             >
               Servicios
             </button>
+            <button
+              onClick={() => {
+                setActiveTab('calendar');
+                setSearchQuery('');
+              }}
+              className={`px-6 py-3 rounded-md font-medium ${
+                activeTab === 'calendar' 
+                  ? 'bg-[--brand-quaternary] text-[--brand-secondary]' 
+                  : 'bg-[--brand-primary] text-[--foreground] hover:bg-[--brand-tertiary] hover:text-[--brand-secondary]'
+              }`}
+            >
+              Calendario
+            </button>
           </div>
 
           <div className="space-y-4">
@@ -389,7 +434,7 @@ export default function AdminPage() {
                   addLabel="Agregar Categoría"
                 />
               </div>
-            ) : (
+            ) : activeTab === 'services' ? (
               <div className="space-y-4">
                 <div className="flex items-center gap-4">
                   <select
@@ -421,6 +466,10 @@ export default function AdminPage() {
                   onAdd={handleAddService}
                   addLabel="Agregar Servicio"
                 />
+              </div>
+            ) : (
+              <div className="space-y-4">
+                <MonthlyCalendar onDateChange={() => {}} />
               </div>
             )}
           </div>
