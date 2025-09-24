@@ -6,7 +6,10 @@ import DataTable from "@/components/DataTable";
 import Form from "@/components/Form";
 import ConfirmationModal from "@/components/ConfirmationModal";
 import SkeletonTable from "@/components/SkeletonTable";
-import MonthlyCalendar from "@/components/MonthlyCalendar";
+import { useState as useStateReact } from "react";
+import { Calendar } from "@/components/ui/calendar";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Sidebar, SidebarContent, SidebarHeader, SidebarGroupLabel, SidebarProvider } from "@/components/ui/sidebar";
 import SearchInput from "@/components/SearchInput";
 
 export default function AdminPage() {
@@ -24,6 +27,9 @@ export default function AdminPage() {
   const [activeTab, setActiveTab] = useState<'categories' | 'services' | 'calendar'>('categories');
   const [selectedCategoryFilter, setSelectedCategoryFilter] = useState<string>('0');
   const [searchQuery, setSearchQuery] = useState<string>('');
+  const [selectedDate, setSelectedDate] = useState<Date | undefined>(undefined);
+  const [calendarMonth, setCalendarMonth] = useState<Date>(new Date());
+  const [showSidebar, setShowSidebar] = useState(false);
   // Inactivity logout (10 minutes)
   const INACTIVITY_MS = 10 * 60 * 1000;
   let inactivityTimer: number | undefined;
@@ -437,18 +443,24 @@ export default function AdminPage() {
             ) : activeTab === 'services' ? (
               <div className="space-y-4">
                 <div className="flex items-center gap-4">
-                  <select
-                    value={selectedCategoryFilter}
-                    onChange={(e) => handleCategoryFilterChange(e.target.value)}
-                    className="px-3 py-2 border border-[--brand-tertiary]/30 rounded-md focus:outline-none focus:ring-2 focus:ring-[--brand-quaternary] focus:border-[--brand-quaternary]"
-                  >
-                    <option value="0">Todas las categorías</option>
-                    {categories.map((category) => (
-                      <option key={category.id_categoria} value={category.id_categoria}>
-                        {category.nombre_categoria}
-                      </option>
-                    ))}
-                  </select>
+                  <div className="w-64">
+                    <Select
+                      value={selectedCategoryFilter}
+                      onValueChange={(val) => handleCategoryFilterChange(val)}
+                    >
+                      <SelectTrigger>
+                        <SelectValue placeholder="Todas las categorías" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="0">Todas las categorías</SelectItem>
+                        {categories.map((category) => (
+                          <SelectItem key={category.id_categoria} value={String(category.id_categoria)}>
+                            {category.nombre_categoria}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
                   <SearchInput
                     placeholder="Buscar servicios..."
                     onSearch={handleSearch}
@@ -469,12 +481,140 @@ export default function AdminPage() {
               </div>
             ) : (
               <div className="space-y-4">
-                <MonthlyCalendar onDateChange={() => {}} />
+                <div className="flex items-center gap-3">
+                  {/* Month Selector - shadcn */}
+                  <Select
+                    value={(calendarMonth.getMonth()+1).toString()}
+                    onValueChange={(val) => {
+                      const m = parseInt(val) - 1;
+                      const next = new Date(calendarMonth);
+                      next.setMonth(m);
+                      setCalendarMonth(next);
+                    }}
+                  >
+                    <SelectTrigger className="w-[160px]">
+                      <SelectValue placeholder="Mes" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {[
+                        'Enero','Febrero','Marzo','Abril','Mayo','Junio','Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre'
+                      ].map((m, idx) => (
+                        <SelectItem key={m} value={(idx+1).toString()}>{m}</SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+
+                  {/* Year Selector - shadcn */}
+                  <Select
+                    value={calendarMonth.getFullYear().toString()}
+                    onValueChange={(val) => {
+                      const y = parseInt(val);
+                      const next = new Date(calendarMonth);
+                      next.setFullYear(y);
+                      setCalendarMonth(next);
+                    }}
+                  >
+                    <SelectTrigger className="w-[120px]">
+                      <SelectValue placeholder="Año" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {Array.from({ length: 11 }).map((_, i) => {
+                        const year = new Date().getFullYear() - 5 + i;
+                        return <SelectItem key={year} value={year.toString()}>{year}</SelectItem>;
+                      })}
+                    </SelectContent>
+                  </Select>
+                </div>
+
+                <div
+                  className="rounded-2xl border border-[--brand-tertiary]/20 bg-[--brand-secondary] p-4"
+                  style={{
+                    ['--rdp-accent-color' as any]: 'var(--brand-primary)',
+                    ['--rdp-accent-background' as any]: 'var(--brand-primary)'
+                  }}
+                >
+                  <Calendar
+                    mode="single"
+                    selected={selectedDate}
+                    onSelect={(date) => {
+                      setSelectedDate(date);
+                      setShowSidebar(true);
+                    }}
+                    month={calendarMonth}
+                    onMonthChange={setCalendarMonth}
+                    initialFocus
+                    className="mx-auto"
+                  />
+                </div>
               </div>
             )}
           </div>
         </div>
       </section>
+
+      {/* Sidebar para horarios */}
+      {showSidebar && selectedDate && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-end z-50">
+          <div className="bg-white h-screen w-80 shadow-xl flex flex-col">
+            <SidebarProvider defaultOpen={true}>
+              <Sidebar side="right" collapsible="none" className="h-full">
+                <SidebarHeader className="bg-[--brand-quaternary] text-white">
+                  <SidebarGroupLabel className="!text-[--brand-quaternary] text-lg font-semibold">
+                    {(() => {
+                      const fullDateString = selectedDate.toLocaleDateString('es-ES', { 
+                        weekday: 'long', 
+                        year: 'numeric', 
+                        month: 'long', 
+                        day: 'numeric' 
+                      });
+                      const parts = fullDateString.split(', ');
+                      if (parts.length > 1) {
+                        const dayName = parts[0].charAt(0).toUpperCase() + parts[0].slice(1).toLowerCase();
+                        return `${dayName}, ${parts.slice(1).join(', ')}`;
+                      }
+                      return fullDateString.charAt(0).toUpperCase() + fullDateString.slice(1).toLowerCase();
+                    })()}
+                  </SidebarGroupLabel>
+                </SidebarHeader>
+                <SidebarContent className="p-4 overflow-y-auto flex-1">
+                  <div className="space-y-1">
+                    {Array.from({ length: 132 }, (_, i) => {
+                      const totalMinutes = 600 + (i * 5); // Empieza a las 10:00 (600 min) y va de 5 en 5
+                      const hours = Math.floor(totalMinutes / 60);
+                      const minutes = totalMinutes % 60;
+                      const timeString = `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}`;
+                      return (
+                        <div 
+                          key={i}
+                          className="p-2 border border-[--brand-tertiary]/20 rounded-md hover:bg-[--brand-primary]/10 cursor-pointer transition-colors"
+                        >
+                          <div className="text-xs font-medium text-[--brand-quaternary]">
+                            {timeString}
+                          </div>
+                          <div className="text-xs text-gray-500">
+                            Disponible
+                          </div>
+                        </div>
+                      );
+                    })}
+                  </div>
+                </SidebarContent>
+                <div className="p-4 border-t">
+                  <button
+                    onClick={() => {
+                      setShowSidebar(false);
+                      setSelectedDate(undefined);
+                    }}
+                    className="w-full px-4 py-2 bg-gray-500 text-white rounded-md hover:opacity-90"
+                  >
+                    Cerrar
+                  </button>
+                </div>
+              </Sidebar>
+            </SidebarProvider>
+          </div>
+        </div>
+      )}
 
       {/* Modal de edición */}
       {showEditModal && (editingCategory || editingService) && (
