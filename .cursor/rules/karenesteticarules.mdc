@@ -43,6 +43,7 @@ alwaysApply: true
 
 ## Estructura de Proyecto
 
+- Se debe hacer para realizar deploy en vercel
 - /components → componentes funcionales y reutilizables.
 - /hooks → lógica de estado y efectos secundarios.
 - /services → llamadas API y lógica de negocio.

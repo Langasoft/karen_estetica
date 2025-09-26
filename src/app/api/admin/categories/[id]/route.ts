@@ -3,10 +3,11 @@ import { updateCategoria, deleteCategoria } from "../../../../admin/categories/s
 
 export async function PUT(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  context: { params: Promise<{ id: string }> }
 ) {
   try {
-    const id = parseInt(params.id);
+    const { id: idStr } = await context.params;
+    const id = parseInt(idStr);
     const { nombre } = await request.json();
     
     if (isNaN(id) || !nombre) {
@@ -32,10 +33,11 @@ export async function PUT(
 
 export async function DELETE(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  context: { params: Promise<{ id: string }> }
 ) {
   try {
-    const id = parseInt(params.id);
+    const { id: idStr } = await context.params;
+    const id = parseInt(idStr);
     
     if (isNaN(id)) {
       return NextResponse.json(
