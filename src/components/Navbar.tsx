@@ -1,6 +1,7 @@
 /**
  * Reusable navbar component
  */
+import { Button } from "@/components/ui/button";
 
 interface NavbarProps {
   className?: string;
@@ -9,7 +10,7 @@ interface NavbarProps {
 export default function Navbar({ className = "" }: NavbarProps) {
   return (
     <header className={`w-full backdrop-blur bg-[--brand-secondary]/70 border-b border-[--brand-tertiary]/30 ${className}`}>
-      <div className="mx-auto max-w-6xl px-6 py-4 flex items-center justify-between">
+      <div className="container mx-auto max-w-6xl px-4 md:px-6 py-4 flex items-center justify-between">
         <div className="flex items-center gap-3">
           {/* Icono de configuración (corporativo) → /admin */}
           <a href="/admin" aria-label="Administración" className="inline-flex items-center justify-center hover:opacity-80 transition-opacity">
@@ -41,10 +42,23 @@ export default function Navbar({ className = "" }: NavbarProps) {
             <span className="text-2xl font-light text-[--brand-tertiary]">Estética Integral</span>
           </a>
         </div>
-        <nav className="hidden sm:flex gap-6 text-sm text-[--foreground]/80">
+        <nav className="hidden sm:flex gap-6 text-sm text-[--foreground]/80 items-center">
           <a href="/servicios" className="hover:text-[--brand-quaternary] transition-colors">Servicios</a>
           <a href="/#testimonios" className="hover:text-[--brand-quaternary] transition-colors">Testimonios</a>
           <a href="/#contacto" className="hover:text-[--brand-quaternary] transition-colors">Contacto</a>
+          <div className="ml-4 flex items-center gap-2">
+            <Button variant="ghost" size="sm" asChild className="hover:bg-[--brand-primary] hover:text-[--brand-quaternary]">
+              <a href="/login">Iniciar sesión</a>
+            </Button>
+            <Button
+              size="sm"
+              asChild
+              className="hover:opacity-90 rounded-full px-4"
+              style={{ backgroundColor: 'var(--brand-quaternary)', color: 'var(--brand-secondary)' }}
+            >
+              <a href="/register">¡Regístrate!</a>
+            </Button>
+          </div>
         </nav>
       </div>
     </header>

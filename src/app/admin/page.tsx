@@ -555,7 +555,7 @@ export default function AdminPage() {
       {/* Sidebar para horarios */}
       {showSidebar && selectedDate && (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-end z-50">
-          <div className="bg-white h-screen w-80 shadow-xl flex flex-col">
+          <div className="bg-white h-screen w-60 shadow-xl flex flex-col">
             <SidebarProvider defaultOpen={true}>
               <Sidebar side="right" collapsible="none" className="h-full">
                 <SidebarHeader className="bg-[--brand-quaternary] text-white">
