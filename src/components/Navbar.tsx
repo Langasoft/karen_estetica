@@ -1,13 +1,53 @@
+"use client";
 /**
  * Reusable navbar component
  */
+import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
+import { Navbar05 } from "@/components/ui/shadcn-io/navbar-05";
 
 interface NavbarProps {
   className?: string;
 }
 
 export default function Navbar({ className = "" }: NavbarProps) {
+  const [clientLogged, setClientLogged] = useState(false);
+
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      setClientLogged(!!localStorage.getItem("clientToken"));
+    }
+  }, []);
+
+  if (clientLogged) {
+    return (
+      <Navbar05
+        className={className}
+        navigationLinks={[
+          { href: "/servicios", label: "Servicios" },
+          { href: "/agenda", label: "Agenda" },
+          { href: "/#contacto", label: "Contacto" },
+        ]}
+        // Cargar nombre del cliente
+        userName={typeof window !== 'undefined' && localStorage.getItem('clientName') ? String(localStorage.getItem('clientName')) : 'Usuario'}
+        userEmail={typeof window !== 'undefined' && localStorage.getItem('clientEmail') ? String(localStorage.getItem('clientEmail')) : ''}
+        onUserItemClick={(item) => {
+          if (item === "logout") {
+            localStorage.removeItem("clientToken");
+            localStorage.removeItem("clientCi");
+            localStorage.removeItem("clientName");
+            localStorage.removeItem("clientEmail");
+            window.location.href = "/";
+          } else if (item === 'password') {
+            window.location.href = '/change-password';
+          } else if (item === 'profile') {
+            window.location.href = '/user-perfil';
+          }
+        }}
+      />
+    );
+  }
+
   return (
     <header className={`w-full backdrop-blur bg-[--brand-secondary]/70 border-b border-[--brand-tertiary]/30 ${className}`}>
       <div className="container mx-auto max-w-6xl px-4 md:px-6 py-4 flex items-center justify-between">
@@ -48,7 +88,7 @@ export default function Navbar({ className = "" }: NavbarProps) {
           <a href="/#contacto" className="hover:text-[--brand-quaternary] transition-colors">Contacto</a>
           <div className="ml-4 flex items-center gap-2">
             <Button variant="ghost" size="sm" asChild className="hover:bg-[--brand-primary] hover:text-[--brand-quaternary]">
-              <a href="/login">Iniciar sesión</a>
+              <a href="/login-usuario">Iniciar sesión</a>
             </Button>
             <Button
               size="sm"
@@ -56,7 +96,7 @@ export default function Navbar({ className = "" }: NavbarProps) {
               className="hover:opacity-90 rounded-full px-4"
               style={{ backgroundColor: 'var(--brand-quaternary)', color: 'var(--brand-secondary)' }}
             >
-              <a href="/register">¡Regístrate!</a>
+              <a href="/register-usuario">¡Regístrate!</a>
             </Button>
           </div>
         </nav>
